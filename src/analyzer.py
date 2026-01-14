@@ -1,10 +1,11 @@
 import os
+from collections import defaultdict
 FILE_PATH="logs/app.log"
 if os.path.exists(FILE_PATH) :
   with open(FILE_PATH,"r") as logFile:
     lines=logFile.readlines()
 
-service_errors={}
+service_errors=defaultdict(int)
 total_errors=0
 for line in lines:
   if "ERROR" in line:
@@ -13,15 +14,9 @@ for line in lines:
       start_index=line.find("service=")
       service_start=line[start_index+8:]
       service_name=service_start.split()[0]
-      if service_name in service_errors:
-        service_errors[service_name]+=1
-      else:
-        service_errors[service_name]=1
     else:
-      if "unkown" in service_errors:
-        service_errors["unkown"]+=1
-      else:
-        service_errors["unkown"]=1
+      service_name="unkown"
+    service_errors[service_name]+=1
 
 print(f"Total errors: {total_errors}")
 print("\nErrors by service:")
